@@ -12,7 +12,7 @@
    [unspecified "#1e1f29" "#ff5c57" "#5af78e" "#f3f99d" "#57c7ff" "#ff6ac1" "#57c7ff" "#eff0eb"])
  '(blink-cursor-mode nil)
  '(blink-matching-paren t)
- '(custom-enabled-themes (quote (sanityinc-tomorrow-eighties)))
+ '(custom-enabled-themes (quote (sanityinc-tomorrow-bright)))
  '(custom-safe-themes
    (quote
     ("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "fc4efe0a97e7a6482e78a7d31e88d2bef45bdcb778f9ed052568ec9bc62fd543" "34ed3e2fa4a1cb2ce7400c7f1a6c8f12931d8021435bad841fdc1192bd1cc7da" "b3bcf1b12ef2a7606c7697d71b934ca0bdd495d52f901e73ce008c4c9825a3aa" "8be07a2c1b3a7300860c7a65c0ad148be6d127671be04d3d2120f1ac541ac103" "174502267725776b47bdd2d220f035cae2c00c818765b138fea376b2cdc15eb6" "2642a1b7f53b9bb34c7f1e032d2098c852811ec2881eec2dc8cc07be004e45a0" "93268bf5365f22c685550a3cbb8c687a1211e827edc76ce7be3c4bd764054bad" "cabc32838ccceea97404f6fcb7ce791c6e38491fd19baa0fcfb336dcc5f6e23c" "fb44ced1e15903449772b750c081e6b8f687732147aa43cfa2e7d9a38820744b" "46720e46428c490e7b2ddeafc2112c5a796c8cf4af71bd6b758d5c19316aff06" "0eccc893d77f889322d6299bec0f2263bffb6d3ecc79ccef76f1a2988859419e" "0e8bac1e87493f6954faf5a62e1356ec9365bd5c33398af3e83cfdf662ad955f" "3cd4f09a44fe31e6dd65af9eb1f10dc00d5c2f1db31a427713a1784d7db7fdfc" default)))
@@ -48,7 +48,7 @@
      ("deleted" :foreground "#ff2c4b" :bold t))))
  '(package-selected-packages
    (quote
-    (color-theme-sanityinc-tomorrow spacemacs-theme python-mode latex-preview-pane magit evil-commentary atom-dark-theme badwolf-theme bash-completion reverse-im avy snazzy-theme zeno-theme nyx-theme smooth-scrolling ace-jump-mode pandoc-mode use-package evil-surround company-auctex company-bibtex auctex auctex-latexmk auctex-lua auto-complete-auctex auto-complete-c-headers auto-complete neotree evil-mc-extras autopair markdown-mode+ evil)))
+    (dictcc multiple-cursors color-theme-sanityinc-tomorrow spacemacs-theme python-mode latex-preview-pane magit evil-commentary atom-dark-theme badwolf-theme bash-completion reverse-im avy snazzy-theme zeno-theme nyx-theme smooth-scrolling ace-jump-mode pandoc-mode use-package evil-surround company-auctex company-bibtex auctex auctex-latexmk auctex-lua auto-complete-auctex auto-complete-c-headers auto-complete neotree autopair markdown-mode+ evil)))
  '(pdf-view-midnight-colors (quote ("#655370" . "#fbf8ef")))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
@@ -63,7 +63,16 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "PT Mono" :foundry "PARA" :slant normal :weight normal :height 113 :width normal)))))
 
+;; LANGUAGE SUPPORT
+
 (setq default-input-method "russian-computer")
+
+(use-package reverse-im
+  :demand t
+  :config
+  (reverse-im-activate "russian-computer"))
+
+;; EVIL MODE
 
   (require 'evil)
   (evil-mode 1)
@@ -76,15 +85,28 @@
   (require 'evil-mc)
   (global-evil-mc-mode 1)
 
-  (require 'autopair)
-  (autopair-global-mode)
+  ;; (require 'evil-mc-extras)
+  ;; (global-evil-mc-extras-mode 1)
 
   (require 'evil-commentary)
   (evil-commentary-mode)
 
+;; MARKDOWN MODE
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.rmd\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+
+
+;; JUMPING
+
   (define-key global-map (kbd "C-c SPC") 'avy-goto-word-1)
   (define-key global-map (kbd "C-c f") 'avy-goto-char)
-  (define-key global-map (kbd "C-c o") 'term)
+  ;; (define-key global-map (kbd "C-c o") 'term)
 
 ;;(autoload
   ;;'ace-jump-mode
@@ -97,18 +119,80 @@
   (require 'smooth-scrolling)
   (smooth-scrolling-mode)
 
-(use-package reverse-im
-  :demand t
-  :config
-  (reverse-im-activate "russian-computer"))
+;; SPELLING
 
 (setq ispell-program-name "aspell")          ; Use hunspell to correct mistakes
+
+;; COMPLETION
 
   (require 'auto-complete)
   (global-auto-complete-mode t)
   (ac-config-default)
   (add-to-list 'ac-modes 'markdown-mode)
   (add-to-list 'ac-modes 'html-mode)
+  (add-to-list 'ac-modes 'latex-mode)
+
+;; NEOTREE
 
   (require 'neotree)
   (global-set-key [f8] 'neotree-toggle)
+
+;; AUTOPAIRS
+
+  ;; (require 'autopair)
+  ;; (autopair-global-mode)
+
+(electric-quote-mode)
+(electric-pair-mode)
+(defun electric-pair ()
+  "If at end of line, insert character pair without surrounding spaces.
+   Otherwise, just insert the typed character."
+  (interactive)
+  (if (eolp) (let (parens-require-spaces) (insert-pair)) 
+    (self-insert-command 1)))
+;; (add-hook 'python-mode-hook
+;;           (lambda ()
+;;             (define-key python-mode-map "\"" 'electric-pair)
+;;             (define-key python-mode-map "\'" 'electric-pair)
+;;             (define-key python-mode-map "(" 'electric-pair)
+;;             (define-key python-mode-map "[" 'electric-pair)
+;;             (define-key python-mode-map "{" 'electric-pair)))
+;; (add-hook 'markdown-mode-hook
+;; 	  (lambda ()
+;; 	    (define-key markdown-mode-map "(" 'electric-pair)
+;; 	    (define-key markdown-mode-map "\’" 'electric-pair)
+;; 	    (define-key markdown-mode-map "\"" 'electric-pair)
+;; 	    (define-key markdown-mode-map "[" 'electric-pair)
+;; 	    (define-key markdown-mode-map "{" 'electric-pair)
+;; 	    (define-key markdown-mode-map "«" 'electric-pair)
+;; 	    (define-key markdown-mode-map "<" 'electric-pair)
+	    ;; ))
+
+;; EXTERNAL COMMANDS
+
+(defun opout ()
+  "open resulting pdf"
+  (interactive)
+  (shell-command 
+   (format "/home/$USER/.scripts/tools/opout %s" 
+       (shell-quote-argument (buffer-file-name))))
+  (revert-buffer t t t))
+(global-set-key (kbd "C-c o") 'opout)
+
+(defun compiler ()
+  "compile the document"
+  (interactive)
+  (shell-command 
+   (format "/home/$USER/.scripts/tools/compiler %s" 
+       (shell-quote-argument (buffer-file-name))))
+  (revert-buffer t t t))
+  ;; (kill-current-buffer))
+(global-set-key (kbd "C-c c") 'compiler)
+
+;; (defun my-set-margins ()
+;;   "Set margins in current buffer."
+;;   (setq left-margin-width 24)
+;;   (setq right-margin-width 24))
+
+;; (add-hook 'text-mode-hook 'my-set-margins)
+;; (add-hook 'markdown-mode-hook 'my-set-margins)
